@@ -18,14 +18,17 @@ import Table from "./Table.svelte";
         buttonMsg = "Hide table";
     }
 
-    // Make an async GET request to NYC Open Data
-    async function getLobbyistData() {
+    // Make an async GET request to load stocks
+    async function getStockData() {
         console.log("Fetching data...");
-        const res = await fetch('https://data.cityofnewyork.us/resource/fmf3-knd8.json');
+        const res = await fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo');
+        console.log(res)
+        
         const data = await res.json();
 
         if (res.ok) {
-            console.log(data[0])
+            console.log(data["Meta Data"])
+            // console.log(Object.keys(data["Time Series (Daily)"][0]))
 			return data;
 		} else {
 			throw new Error(data);
@@ -36,7 +39,7 @@ import Table from "./Table.svelte";
 	let promise;
 
 	function fetchData() {
-		promise = getLobbyistData();
+		promise = getStockData();
 	}
 
 </script>

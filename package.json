@@ -1,0 +1,23 @@
+{
+	"name": "stockrunner",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "eslint ."
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.20.4",
+		"eslint": "^8.28.0",
+		"eslint-plugin-svelte": "^2.30.0",
+		"svelte": "^4.0.5",
+		"vite": "^4.4.2"
+	},
+	"type": "module",
+	"dependencies": {
+		"p5-svelte": "^3.1.2"
+	}
+}

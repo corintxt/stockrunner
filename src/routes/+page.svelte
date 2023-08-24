@@ -1,4 +1,5 @@
 <script>
+import Demo from "./Demo.svelte";
 import Chart from "./Chart.svelte";
 import Table from "./Table.svelte";
 
@@ -15,32 +16,32 @@ import Table from "./Table.svelte";
     $: if (!display.switchOn) {
         buttonMsg = "Get started";
     } else {
-        buttonMsg = "Hide table";
+        buttonMsg = "Hide chart";
     }
 
     // Make an async GET request to load stocks
     async function getStockData() {
         console.log("Fetching data...");
         const res = await fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo');
-        console.log(res)
-        
         const data = await res.json();
 
         if (res.ok) {
-            console.log(data["Meta Data"])
-            // console.log(Object.keys(data["Time Series (Daily)"][0]))
+            console.log("Stock data received.")
 			return data;
 		} else {
 			throw new Error(data);
 		}
 	}
 
-    // First we initiate the variable for scope, but don't call the getLobbyist function
+    // First we initiate the variable for scope, but don't call the getStockData function immediately
 	let promise;
 
 	function fetchData() {
 		promise = getStockData();
 	}
+    //We will need a separate function to process the data returned by 
+    // getStockData ... but how to do it and maintain the promise?
+    // => Look at what an async function returns exactly.
 
 </script>
 
@@ -52,7 +53,7 @@ import Table from "./Table.svelte";
     <button on:click="{ fetchData }">Fetch data</button>
 </div>
 
-<Chart />
+<Demo />
 
 <hr>
 
@@ -62,8 +63,9 @@ import Table from "./Table.svelte";
         <!-- Load the table only after response from .fetch() request -->
         {#await promise}
             <p>Waiting for response...</p>
-        {:then tableData}
-            <Table {tableData} />
+        {:then stockData}
+            <Chart {stockData} />
+            <!-- This will become a Chart with chartData -->
         {:catch error}
             <p style="color: red">{error.message}</p>
         {/await}

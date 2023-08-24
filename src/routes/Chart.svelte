@@ -1,31 +1,31 @@
 <script>
     import P5 from 'p5-svelte';
-    let width = 55;
-    let height = 55;
-  
+
+    // Export this variable so that it can be a prop that gets passed in on 
+    // component creation
+    export let stockData;
+
+    // Data processing functions go here
+    let data = stockData;
+    console.log(data["Meta Data"])
+    // console.log(Object.keys(data["Time Series (Daily)"][0]))
+
     const sketch = (p5) => {
       p5.setup = () => {
-        p5.createCanvas(400, 400);
+        p5.createCanvas(500, 300);
       };
   
       p5.draw = () => {
-        p5.ellipse(p5.width / 2, p5.height / 2, width, height);
-      };
+        p5.background(220);
+        p5.line(0, 0, 150, 200);
+        };
     };
 
-  </script>
-  
-  <label>
-    Width
-    <input type="range" bind:value={width} min="100" max="1000" step="0.01" />
-    {width}
-  </label>
-  
-  <label>
-    Height
-    <input type="range" bind:value={height} min="100" max="1000" step="0.01" />
-    {height}
-  </label>
-  
-  <P5 {sketch} />
-  
+</script>
+
+<div>
+    <h2>Stock data here:</h2>
+
+    <P5 {sketch} />
+
+</div>

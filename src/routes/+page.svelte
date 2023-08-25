@@ -43,35 +43,38 @@ import Chart from "./Chart.svelte";
 
 </script>
 
-<h1>{ title }</h1>
+<div class="container mt-5">
 
-<div>
-    <!-- TODO: Conditional logic to make each button do the right thing at right time -->
-    <button on:click="{ toggle }">{ buttonMsg }</button>
-    <button on:click="{ fetchData }">Fetch data</button>
+    <h1>{ title }</h1>
+
+    <div>
+        <!-- TODO: Conditional logic to make each button do the right thing at right time -->
+        <button class="btn btn-primary" type="button" on:click="{ toggle }">{ buttonMsg }</button>
+        <button type="button" class="btn btn-dark" on:click="{ fetchData }">Fetch data</button>
+    </div>
+
+    <hr>
+
+    {#if display.switchOn}
+        <div>
+            DISPLAY <strong>ON</strong>
+            <!-- Load the table only after response from .fetch() request -->
+            {#await promise}
+                <p>Waiting for response...</p>
+            {:then stockData}
+                <Chart {stockData} />
+                <!-- This will become a Chart with chartData -->
+            {:catch error}
+                <p style="color: red">{error.message}</p>
+            {/await}
+        </div>
+    {:else} 
+        <div>
+            DISPLAY <strong>OFF</strong>
+        </div>
+    {/if}
+
 </div>
-
-<hr>
-
-{#if display.switchOn}
-    <div>
-        DISPLAY <strong>ON</strong>
-        <!-- Load the table only after response from .fetch() request -->
-        {#await promise}
-            <p>Waiting for response...</p>
-        {:then stockData}
-            <Chart {stockData} />
-            <!-- This will become a Chart with chartData -->
-        {:catch error}
-            <p style="color: red">{error.message}</p>
-        {/await}
-    </div>
-{:else} 
-    <div>
-        DISPLAY <strong>OFF</strong>
-    </div>
-{/if}
-
 
 
 <!-- STYLING -->

@@ -1,7 +1,5 @@
 <script>
-import Demo from "./Demo.svelte";
 import Chart from "./Chart.svelte";
-import Table from "./Table.svelte";
 
     const title = "Stockrunner";
 
@@ -52,8 +50,6 @@ import Table from "./Table.svelte";
     <button on:click="{ toggle }">{ buttonMsg }</button>
     <button on:click="{ fetchData }">Fetch data</button>
 </div>
-
-<Demo />
 
 <hr>
 

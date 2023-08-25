@@ -15,30 +15,32 @@
     let tickerName = data["Meta Data"]["2. Symbol"];
     let stockPriceSeries = data["Time Series (Daily)"];
 
-    // Access values from stock
-    console.log(Object.keys(stockPriceSeries)[0])
-    console.log(stockPriceSeries[Object.keys(stockPriceSeries)[0]])
-
     // Get the most recent daily high value of the stock
     const firstPoint = stockPriceSeries[Object.keys(stockPriceSeries)[0]]['2. high']
+    console.log("First day high:" + " $" + firstPoint)
 
-    console.log(firstPoint)
+    // Convet obj to array for easy iteration in draw function
+    let stockArray = Object.entries(stockPriceSeries);
 
     const sketch = (p5) => {
       p5.setup = () => {
         p5.createCanvas(500, 300);
-      };
-  
+      };  
+
       p5.draw = () => {
         p5.background(220);
         // p5.line(0, 0, 150, 200);
 
         p5.stroke('purple');
-        p5.strokeWeight(10);
-        p5.point(100, firstPoint);
-        };
-        
-    
+        p5.strokeWeight(5);
+
+        let xPos = 0;
+        for (let [date, prices] of stockArray){
+            let yPos = prices['2. high'];
+            p5.point(xPos, yPos);
+            xPos += 5;
+        } 
+        };    
     };
 
 </script>

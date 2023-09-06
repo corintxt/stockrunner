@@ -22,15 +22,16 @@
     // Convet obj to array for easy iteration in draw function
     let stockArray = Object.entries(stockPriceSeries);
 
+    let gameState = false;
     let stockParticles = [];
     let player;
 
+    /// P5 SKETCH STARTS HERE.
     const sketch = (p5) => {
       let height = 300;
       let width = 500;
 
       p5.setup = () => {
- 
 
         p5.createCanvas(width, height);
         p5.background(220);
@@ -48,7 +49,6 @@
             stockParticles.push(s);
             xPos += 5; //currently there are 100 particles & 500px canvas
         }
-
       };  
 
       // GAME DRAW LOOP
@@ -136,16 +136,54 @@
         player.move();
       };
 
-    };
+      // Control flow functions
+      function playGame() {
+        console.log("Game is running");
+        p5.loop();
+      }
 
-    
+      function pauseGame() {
+        console.log("Game is paused");
+        p5.noLoop();
+      }
+
+      function checkGameState() {
+        if (gameState) {
+            playGame();
+        } else {
+            pauseGame();
+        }
+    }
+    // Is there a better way to do this?
+    setInterval(checkGameState, 500);
+
+    }; //END P5 SKETCH
+
+    // Game on/off control – could become part of prop.
+    function toggleGameState() {
+        gameState = !gameState; 
+    }
 
 </script>
+
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
 
 <div>
     <h2>Stock data here:</h2>
     <p>You chose: {tickerName}</p>
 
     <P5 {sketch} />
+
+    <button type="button" class="btn btn-dark" on:click="{ toggleGameState }">
+        {#if gameState}
+        Pause
+        {:else}
+        Play
+        {/if}
+    </button>
 
 </div>

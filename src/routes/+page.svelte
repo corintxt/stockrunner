@@ -57,7 +57,7 @@ import Chart from "./Chart.svelte";
 
     {#if display.switchOn}
         <div>
-            DISPLAY <strong>ON</strong>
+            GAME DISPLAY <strong>ON</strong>
             <!-- Load the table only after response from .fetch() request -->
             {#await promise}
                 <p>Waiting for response...</p>
@@ -70,7 +70,7 @@ import Chart from "./Chart.svelte";
         </div>
     {:else} 
         <div>
-            DISPLAY <strong>OFF</strong>
+            GAME DISPLAY <strong>OFF</strong>
         </div>
     {/if}
 

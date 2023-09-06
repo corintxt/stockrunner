@@ -23,6 +23,8 @@
     let stockArray = Object.entries(stockPriceSeries);
 
     let gameState = false;
+    let collision = false;
+
     let stockParticles = [];
     let player;
 
@@ -57,6 +59,13 @@
 
         updatePlayer();
         updateParticles();
+
+        if (collision) {
+            p5.background('#EC4646');
+            setTimeout(collisionReset, 10);
+            // gameState = false;
+            // setCollision(true);
+        }
 
       };    
 
@@ -98,6 +107,13 @@
                 this.pos.x = width;
             }
         }
+        collisionCheck() {
+            if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 10) {
+                // console.log("Collision detected!");
+                // gameState = false;
+                collision = true;
+            };
+        }
       };
 
       class Player {
@@ -125,6 +141,7 @@
       function updateParticles() {
         for (const p of stockParticles) {
             p.render();
+            p.collisionCheck();
         }
         for (const p of stockParticles) {
             p.bounce(50);
@@ -136,14 +153,14 @@
         player.move();
       };
 
-      // Control flow functions
+      // GAME STATE AND CONTROL FUNCTIONS
       function playGame() {
-        console.log("Game is running");
+        // console.log("Game is running");
         p5.loop();
       }
 
       function pauseGame() {
-        console.log("Game is paused");
+        // console.log("Game is paused");
         p5.noLoop();
       }
 
@@ -154,12 +171,20 @@
             pauseGame();
         }
     }
+
+    function collisionReset(){
+        console.log("Collision reset");
+        collision = false;
+        p5.background(220);
+        // p5.loop();
+    }
+
     // Is there a better way to do this?
     setInterval(checkGameState, 500);
 
     }; //END P5 SKETCH
 
-    // Game on/off control – could become part of prop.
+    // Game on/off control – could become part of prop passed to sketch component.
     function toggleGameState() {
         gameState = !gameState; 
     }
@@ -173,17 +198,15 @@
 </style>
 
 <div>
-    <h2>Stock data here:</h2>
-    <p>You chose: {tickerName}</p>
+    <h2>Stock data:</h2>
+    <p>You chose <b>{tickerName}</b></p>
 
     <P5 {sketch} />
-
-    <button type="button" class="btn btn-dark" on:click="{ toggleGameState }">
-        {#if gameState}
-        Pause
-        {:else}
-        Play
-        {/if}
-    </button>
+    
+    {#if gameState}
+    <button type="button" class="btn btn-warning" on:click="{ toggleGameState }">Pause</button>
+    {:else}
+    <button type="button" class="btn btn-success" on:click="{ toggleGameState }">Play</button>
+    {/if}
 
 </div>

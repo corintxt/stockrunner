@@ -112,6 +112,13 @@
             p5.strokeWeight(10);  
             p5.point(this.pos.x, this.pos.y);
         }
+        move() {
+            this.pos.x += 1;
+            // Reset on edge
+            if (this.pos.x > width) {
+                this.pos.x = 0;
+            }
+        }
       }
 
       // FUNCTIONS FOR DRAW LOOP
@@ -126,7 +133,7 @@
 
       function updatePlayer() {
         player.render();
-        // player.move();
+        player.move();
       };
 
     };

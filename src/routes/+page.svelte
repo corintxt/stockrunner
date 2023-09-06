@@ -12,9 +12,9 @@ import Chart from "./Chart.svelte";
     let buttonMsg = "Turn display on";
     // Use $ label to make this a reactive declaration bound to display.switchOn
     $: if (!display.switchOn) {
-        buttonMsg = "Get started";
+        buttonMsg = "Start game";
     } else {
-        buttonMsg = "Hide chart";
+        buttonMsg = "Hide game";
     }
 
     // Make an async GET request to load stocks

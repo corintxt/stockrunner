@@ -23,6 +23,7 @@
     // Convet obj to array for easy iteration in draw function
     let stockArray = Object.entries(stockPriceSeries);
 
+    // Define variables for game objects
     let gameState = false;
     let collision = false;
     let speed = 1;
@@ -36,15 +37,14 @@
       let width = 500;
 
       p5.setup = () => {
-
         p5.createCanvas(width, height);
         p5.background(220);
 
         // Create a player
         player = new Player(width/2, height/2, 'blue');
 
-        let xPos = 0;
- 
+        // Create stock particles
+        let xPos = 0; 
         for (let [date, prices] of stockArray){
             let yPos = prices['2. high'];
             const s = new Particle(xPos,yPos, speed);
@@ -83,24 +83,21 @@
             p5.point(this.pos.x, this.pos.y);
       
         }
-        bounce(range) {
-            // let vec = p5.createVector(-1, -1)
-            // this.pos = this.pos.add(vec);
-            
+        bounce(range) {            
             this.pos.y -= this.vec;
             this.pos.x -= this.speed;
 
             this.displace += this.vec;
 
-            // Switch displace vector
-            // (multiply by -1 switches positive/negative)
+            // Switch displacement vector at limit of range of motion
+            // (multiplying by -1 switches positive/negative)
             if (this.displace > range) {
                 this.vec *= -1;
             } else if (this.displace < -range) {
                 this.vec *= -1;
             };
 
-            // Reset at the bottom
+            // Reset at the edges of screen
             if (this.pos.y < 0) {
                 this.pos.y = height;
             }
@@ -110,7 +107,6 @@
         }
         collisionCheck() {
             if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 10) {
-                // console.log("Collision detected!");
                 // gameState = false;
                 collision = true;
             };
@@ -121,9 +117,10 @@
         constructor(x, y, color='white') {
             this.pos = p5.createVector(x, y);
             this.speed = 1;
-            this.vel = p5.createVector(0, 0);
-            this.acc = p5.createVector(0, 0);
             this.color=color;
+            // this.vel = p5.createVector(0, 0);
+            // this.acc = p5.createVector(0, 0);
+
         }
         render() {
             p5.stroke(this.color);
@@ -132,10 +129,17 @@
         }
         move() {
             this.pos.x += this.speed;
-            // Reset on edge
+            // Reset on edges
             if (this.pos.x > width) {
                 this.pos.x = 0;
             }
+            // Can't pass through floor/ceiling
+            if (this.pos.y < 0) {
+                this.pos.y = 3;
+            } else if (this.pos.y > height) {
+                this.pos.y = height - 3;
+            }
+            // Direction controls
             if (direction == 'up'){
                 this.pos.y -= this.speed;
             } else if (direction == 'down'){
@@ -192,7 +196,6 @@
         console.log("Collision reset");
         collision = false;
         p5.background(220);
-        // p5.loop();
     }
 
     // Is there a better way to do this?

@@ -37,9 +37,25 @@ import Chart from "./Chart.svelte";
 	function fetchData() {
 		promise = getStockData();
 	}
-    //We will need a separate function to process the data returned by 
-    // getStockData ... but how to do it and maintain the promise?
-    // => Look at what an async function returns exactly.
+
+    let direction = 'none';
+    // Handle key press
+    function onKeyDown(e) {
+		 switch(e.keyCode) {
+			 case 38:
+                direction = 'up'
+				 break;
+			 case 40:
+                direction = 'down'
+				 break;
+			 case 37:
+				//  left -= 50;
+				 break;
+			 case 39:
+				//  left += 50;
+				 break;
+		 }
+	}
 
 </script>
 
@@ -62,7 +78,7 @@ import Chart from "./Chart.svelte";
             {#await promise}
                 <p>Waiting for response...</p>
             {:then stockData}
-                <Chart {stockData} />
+                <Chart stockData={stockData} direction={direction} />
                 <!-- This will become a Chart with chartData -->
             {:catch error}
                 <p style="color: red">{error.message}</p>
@@ -72,8 +88,7 @@ import Chart from "./Chart.svelte";
         <div>
             GAME DISPLAY <strong>OFF</strong>
         </div>
-    {/if}
-
+    {/if}   
 </div>
 
 
@@ -84,3 +99,6 @@ import Chart from "./Chart.svelte";
         color: rgb(22, 22, 175);
     }
 </style>
+
+<!-- // Prevent default behavior of arrow keys -->
+<svelte:window on:keydown|preventDefault={onKeyDown} />

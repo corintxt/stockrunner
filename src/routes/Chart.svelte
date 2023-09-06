@@ -4,6 +4,7 @@
     // Export this variable so that it can be a prop that gets passed in on 
     // component creation
     export let stockData;
+    export let direction;
 
     // Data processing functions go here
     let data = stockData;
@@ -24,6 +25,7 @@
 
     let gameState = false;
     let collision = false;
+    let speed = 1;
 
     let stockParticles = [];
     let player;
@@ -42,8 +44,6 @@
         player = new Player(width/2, height/2, 'blue');
 
         let xPos = 0;
-        // maybe a switch could control this later:
-        let speed = 1
  
         for (let [date, prices] of stockArray){
             let yPos = prices['2. high'];
@@ -51,7 +51,7 @@
             stockParticles.push(s);
             xPos += 5; //currently there are 100 particles & 500px canvas
         }
-      };  
+      };
 
       // GAME DRAW LOOP
       p5.draw = () => {
@@ -73,8 +73,9 @@
       class Particle {
         constructor(x, y, z) {
             this.pos = p5.createVector(x, y);
-            this.displace = 0;
             this.vec = z;
+            this.displace = 0;
+            this.speed = 1;
         }
         render() {
             p5.stroke('purple');
@@ -87,7 +88,7 @@
             // this.pos = this.pos.add(vec);
             
             this.pos.y -= this.vec;
-            this.pos.x -= 1;
+            this.pos.x -= this.speed;
 
             this.displace += this.vec;
 
@@ -119,6 +120,7 @@
       class Player {
         constructor(x, y, color='white') {
             this.pos = p5.createVector(x, y);
+            this.speed = 1;
             this.vel = p5.createVector(0, 0);
             this.acc = p5.createVector(0, 0);
             this.color=color;
@@ -129,12 +131,27 @@
             p5.point(this.pos.x, this.pos.y);
         }
         move() {
-            this.pos.x += 1;
+            this.pos.x += this.speed;
             // Reset on edge
             if (this.pos.x > width) {
                 this.pos.x = 0;
             }
+            if (direction == 'up'){
+                this.pos.y -= this.speed;
+            } else if (direction == 'down'){
+                this.pos.y += this.speed;
+            }
+        // }
+        // accelerate() {
+        //     if (direction == 'up'){
+        //         this.vel.y -= this.speed;
+           
+        //     }
         }
+        adjustSpeed(s) {
+            this.speed = s;
+        }
+        
       }
 
       // FUNCTIONS FOR DRAW LOOP
@@ -142,14 +159,13 @@
         for (const p of stockParticles) {
             p.render();
             p.collisionCheck();
-        }
-        for (const p of stockParticles) {
             p.bounce(50);
         }
       };
 
       function updatePlayer() {
         player.render();
+        player.adjustSpeed(speed);
         player.move();
       };
 
@@ -182,13 +198,12 @@
     // Is there a better way to do this?
     setInterval(checkGameState, 500);
 
-    }; //END P5 SKETCH
+}; //END P5 SKETCH
 
     // Game on/off control – could become part of prop passed to sketch component.
     function toggleGameState() {
         gameState = !gameState; 
     }
-
 </script>
 
 <style>
@@ -209,4 +224,14 @@
     <button type="button" class="btn btn-success" on:click="{ toggleGameState }">Play</button>
     {/if}
 
+    <label>
+        Speed
+        <input type="range" bind:value={speed} min="0.5" max="2.5" step="0.5" />
+        {speed*2}
+    </label>
+
+    <h4>Direction: {direction}</h4>
+
 </div>
+
+<!-- <svelte:window on:keydown|preventDefault={onKeyDown} /> -->

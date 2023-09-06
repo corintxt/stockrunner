@@ -23,14 +23,20 @@
     let stockArray = Object.entries(stockPriceSeries);
 
     let stockParticles = [];
+    let player;
 
     const sketch = (p5) => {
       let height = 300;
       let width = 500;
 
       p5.setup = () => {
+ 
+
         p5.createCanvas(width, height);
         p5.background(220);
+
+        // Create a player
+        player = new Player(width/2, height/2, 'blue');
 
         let xPos = 0;
         // maybe a switch could control this later:
@@ -40,22 +46,21 @@
             let yPos = prices['2. high'];
             const s = new Particle(xPos,yPos, speed);
             stockParticles.push(s);
-            xPos += 5;
-        } 
+            xPos += 5; //currently there are 100 particles & 500px canvas
+        }
 
       };  
 
+      // GAME DRAW LOOP
       p5.draw = () => {
         p5.background(220);
 
-        for (const p of stockParticles) {
-            p.render();
-        }
-        for (const p of stockParticles) {
-            p.bounce(50);
-        }
+        updatePlayer();
+        updateParticles();
+
       };    
 
+      // PARTICLE AND PLAYER CLASSES
       class Particle {
         constructor(x, y, z) {
             this.pos = p5.createVector(x, y);
@@ -63,9 +68,10 @@
             this.vec = z;
         }
         render() {
-            p5.point(this.pos.x, this.pos.y);
             p5.stroke('purple');
-            p5.strokeWeight(3);            
+            p5.strokeWeight(3);      
+            p5.point(this.pos.x, this.pos.y);
+      
         }
         bounce(range) {
             // let vec = p5.createVector(-1, -1)
@@ -77,6 +83,7 @@
             this.displace += this.vec;
 
             // Switch displace vector
+            // (multiply by -1 switches positive/negative)
             if (this.displace > range) {
                 this.vec *= -1;
             } else if (this.displace < -range) {
@@ -92,6 +99,36 @@
             }
         }
       };
+
+      class Player {
+        constructor(x, y, color='white') {
+            this.pos = p5.createVector(x, y);
+            this.vel = p5.createVector(0, 0);
+            this.acc = p5.createVector(0, 0);
+            this.color=color;
+        }
+        render() {
+            p5.stroke(this.color);
+            p5.strokeWeight(10);  
+            p5.point(this.pos.x, this.pos.y);
+        }
+      }
+
+      // FUNCTIONS FOR DRAW LOOP
+      function updateParticles() {
+        for (const p of stockParticles) {
+            p.render();
+        }
+        for (const p of stockParticles) {
+            p.bounce(50);
+        }
+      };
+
+      function updatePlayer() {
+        player.render();
+        // player.move();
+      };
+
     };
 
     

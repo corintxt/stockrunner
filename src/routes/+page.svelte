@@ -1,7 +1,10 @@
 <script>
+import key from "$lib/local.js"
 import Chart from "./Chart.svelte";
 
     const title = "Stockrunner";
+
+    const tickers = ["AAPL","AMZN","GOOGL","META","TSLA"];
 
     let display = { switchOn: false };
 
@@ -18,9 +21,9 @@ import Chart from "./Chart.svelte";
     }
 
     // Make an async GET request to load stocks
-    async function getStockData() {
+    async function getStockData(symbol) {
         console.log("Fetching data...");
-        const res = await fetch('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=demo');
+        const res = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${key}`);
         const data = await res.json();
 
         if (res.ok) {
@@ -34,8 +37,8 @@ import Chart from "./Chart.svelte";
     // First we initiate the variable for scope, but don't call the getStockData function immediately
 	let promise;
 
-	function fetchData() {
-		promise = getStockData();
+	function fetchData(symbol) {
+		promise = getStockData(symbol);
 	}
 
     let direction = 'none';
@@ -63,9 +66,16 @@ import Chart from "./Chart.svelte";
 
     <h1>{ title }</h1>
 
+    <p>Pick a stock:</p>
+
+    {#each tickers as ticker}
+        <button type="button" class="btn btn-secondary" on:click="{ () => fetchData(ticker) }">{ticker}</button>
+    {/each}
+
+    <hr>
+
     <div>
         <!-- TODO: Conditional logic to make each button do the right thing at right time -->
-        <button type="button" class="btn btn-dark" on:click="{ fetchData }">Fetch data</button>
         <button class="btn btn-primary" type="button" on:click="{ toggle }">{ buttonMsg }</button>
 
     </div>
@@ -79,7 +89,7 @@ import Chart from "./Chart.svelte";
             {#await promise}
                 <p>Waiting for response...</p>
             {:then stockData}
-                <Chart stockData={stockData} direction={direction} />
+                <Chart stockData={stockData} direction={direction} gameState={true} />
                 <!-- This will become a Chart with chartData -->
             {:catch error}
                 <p style="color: red">{error.message}</p>

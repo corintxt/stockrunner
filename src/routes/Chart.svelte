@@ -5,6 +5,7 @@
     // component creation
     export let stockData;
     export let direction;
+    export let gameState;
 
     // Data processing functions go here
     let data = stockData;
@@ -24,7 +25,6 @@
     let stockArray = Object.entries(stockPriceSeries);
 
     // Define variables for game objects
-    let gameState = false;
     let collision = false;
     let speed = 1;
 

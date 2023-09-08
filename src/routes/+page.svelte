@@ -1,6 +1,8 @@
 <script>
 import key from "$lib/local.js"
 import Chart from "./Chart.svelte";
+import Jump from "./Jump.svelte";
+
 
     const title = "Stockrunner";
 
@@ -89,7 +91,7 @@ import Chart from "./Chart.svelte";
             {#await promise}
                 <p>Waiting for response...</p>
             {:then stockData}
-                <Chart stockData={stockData} direction={direction} gameState={true} />
+                <Jump stockData={stockData} direction={direction} gameState={true} />
                 <!-- This will become a Chart with chartData -->
             {:catch error}
                 <p style="color: red">{error.message}</p>

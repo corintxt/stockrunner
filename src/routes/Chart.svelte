@@ -62,7 +62,7 @@
 
         if (collision) {
             p5.background('#EC4646');
-            setTimeout(collisionReset, 10);
+            setTimeout(collisionReset, 5);
             // gameState = false;
             // setCollision(true);
         }
@@ -198,7 +198,7 @@
         p5.background(220);
     }
 
-    // Is there a better way to do this?
+    // Is there a better way to do this with reactivity?
     setInterval(checkGameState, 500);
 
 }; //END P5 SKETCH

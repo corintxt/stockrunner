@@ -65,8 +65,9 @@ import Chart from "./Chart.svelte";
 
     <div>
         <!-- TODO: Conditional logic to make each button do the right thing at right time -->
-        <button class="btn btn-primary" type="button" on:click="{ toggle }">{ buttonMsg }</button>
         <button type="button" class="btn btn-dark" on:click="{ fetchData }">Fetch data</button>
+        <button class="btn btn-primary" type="button" on:click="{ toggle }">{ buttonMsg }</button>
+
     </div>
 
     <hr>

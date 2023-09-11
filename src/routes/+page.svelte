@@ -14,12 +14,12 @@ import Jump from "./Jump.svelte";
 		display.switchOn = !display.switchOn;
 	}
 
-    let buttonMsg = "Turn display on";
+    let buttonMsg = "";
     // Use $ label to make this a reactive declaration bound to display.switchOn
     $: if (!display.switchOn) {
         buttonMsg = "Start game";
     } else {
-        buttonMsg = "Hide game";
+        buttonMsg = "Reset game";
     }
 
     // Make an async GET request to load stocks
@@ -44,6 +44,8 @@ import Jump from "./Jump.svelte";
 	}
 
     let direction = 'none';
+    let gameSpeed = 1;
+
     // Handle key press
     function onKeyDown(e) {
 		 switch(e.keyCode) {
@@ -57,10 +59,12 @@ import Jump from "./Jump.svelte";
                 direction = 'jump'
 				 break;
 			 case 37:
-				//  left -= 50;
+                //left
+				 gameSpeed -= 0.5;
 				 break;
 			 case 39:
-				//  left += 50;
+				//right
+                gameSpeed += 0.5;
 				 break;
 		 }
          
@@ -98,7 +102,7 @@ import Jump from "./Jump.svelte";
             {#await promise}
                 <p>Waiting for response...</p>
             {:then stockData}
-                <Jump stockData={stockData} direction={direction} gameState={true} />
+                <Jump stockData={stockData} direction={direction} speed={gameSpeed} gameState={true} />
                 <!-- This will become a Chart with chartData -->
             {:catch error}
                 <p style="color: red">{error.message}</p>
@@ -115,8 +119,12 @@ import Jump from "./Jump.svelte";
 <!-- STYLING -->
 
 <style>
+    :global(body) {
+        color: #fff779;
+        background-color: #313131;
+    }
+
     h1 {
-        color: rgb(128, 128, 255);
         font-size: 4.5rem;
     }
 

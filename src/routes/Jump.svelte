@@ -57,18 +57,27 @@
             let yPos = ((priceMax - prices['2. high']) * rangeFix) + bounceRange;
             const s = new Particle(xPos,yPos, stockSpeed);
             stockParticles.push(s);
-            xPos += width/100; //currently there are 100 particles
+            xPos += width/100; //currently there are 100 particles, as 100 stock details
         }
       };
+
 
       // GAME DRAW LOOP
       p5.draw = () => {
         p5.background(220);
+
+        // // Make price mark
+        p5.strokeWeight(0);  
+        p5.textSize(20);
+        p5.text('$price', 10, 30);
+        // p5.fill(0, 102, 153);
+
         // Draw ground line
-        p5.stroke('black');
-        p5.strokeWeight(3);  
+        p5.strokeWeight(5);  
+        p5.stroke('grey');
         let gy = height - ground;
         p5.line(0, gy, width, gy);
+
 
         updatePlayer();
         updateParticles();

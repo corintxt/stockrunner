@@ -53,6 +53,9 @@ import Jump from "./Jump.svelte";
 			 case 40:
                 direction = 'down'
 				 break;
+             case 32:
+                direction = 'jump'
+				 break;
 			 case 37:
 				//  left -= 50;
 				 break;
@@ -60,7 +63,11 @@ import Jump from "./Jump.svelte";
 				//  left += 50;
 				 break;
 		 }
+         
 	}
+    function keyClear() {
+        direction = 'none';
+    }
 
 </script>
 
@@ -123,7 +130,7 @@ import Jump from "./Jump.svelte";
 </style>
 
 <!-- // Prevent default behavior of arrow keys -->
-<svelte:window on:keydown|preventDefault={onKeyDown} />
+<svelte:window on:keydown|preventDefault={onKeyDown} on:keyup|preventDefault={keyClear} />
 
 <svelte:head>
   <link href="https://fonts.googleapis.com/css?family=M+PLUS+Code+Latin" rel="stylesheet">

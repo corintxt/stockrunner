@@ -71,7 +71,7 @@ import Jump from "./Jump.svelte";
     <p>Pick a stock:</p>
 
     {#each tickers as ticker}
-        <button type="button" class="btn btn-secondary" on:click="{ () => fetchData(ticker) }">{ticker}</button>
+        <button type="button" class="btn btn-secondary btn-space" on:click="{ () => fetchData(ticker) }">{ticker}</button>
     {/each}
 
     <hr>
@@ -109,9 +109,22 @@ import Jump from "./Jump.svelte";
 
 <style>
     h1 {
-        color: rgb(22, 22, 175);
+        color: rgb(128, 128, 255);
+        font-size: 4.5rem;
     }
+
+    * {
+        font-family: M PLUS Code Latin;
+    }
+
+    .btn-space {
+    margin-right: 5px;
+}
 </style>
 
 <!-- // Prevent default behavior of arrow keys -->
 <svelte:window on:keydown|preventDefault={onKeyDown} />
+
+<svelte:head>
+  <link href="https://fonts.googleapis.com/css?family=M+PLUS+Code+Latin" rel="stylesheet">
+</svelte:head>

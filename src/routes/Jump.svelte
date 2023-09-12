@@ -26,11 +26,13 @@
 
     // Define outside of p5 scoped variables for game objects
     let collision = false;
+    let kill = false;
     let score = 0;
     let stockParticles = [];
     let stockSpeed = 1;
     const bounceRange = 30;
     let player;
+    let killer;
 
     /// P5 SKETCH STARTS HERE.
     const sketch = (p5) => {
@@ -65,6 +67,10 @@
             stockParticles.push(s);
             xPos += width/100; //currently there are 100 particles, as 100 stock details
         }
+
+        // Create a killer (this will need to be more random)
+        killer = new KILLER(width, height/2, 'red', 10, 2);
+
       };
 
       // GAME DRAW LOOP
@@ -76,7 +82,6 @@
         p5.textSize(15);
         p5.text(`High: $${priceMax}`, 5, calcHeight(priceMax));
         p5.text(`Low: $${priceMin}`, 5, calcHeight(priceMin));
-        // p5.fill(0, 102, 153);
 
         // Draw ground line
         p5.strokeWeight(5);  
@@ -84,10 +89,12 @@
         let gy = height - ground;
         p5.line(0, gy, width, gy);
 
-
+        // Update all game sprites
         updatePlayer();
         updateParticles();
+        updateKiller();
 
+        // Check for collisions and kills
         if (collision) {
             p5.background('#cff08d');
             setTimeout(collisionReset, 5);
@@ -96,6 +103,14 @@
             // setCollision(true);
         }
 
+        if (kill) {
+            p5.background('red');
+            p5.strokeWeight(0);  
+            p5.textSize(100);
+            p5.text("KILL", width/2, height/2);
+            setTimeout(killReset, 500);
+            // gameState = false;
+        }
       };    
 
       // PARTICLE CLASS
@@ -200,27 +215,37 @@
             this.vy = -this.jump;
         } 
         
-      }
+      };
 
       // KILLER CLASS
       class KILLER {
-        constructor(x, y, color='red', size) {
+        constructor(x, y, color='red', size, speed) {
             this.pos = p5.createVector(x, y);
-            this.speed = 1;
+            this.speed = speed;
             this.color=color;
             this.size=size;
         }
         render() {
             p5.stroke(this.color);
-            p5.strokeWeight(10);  
-            p5.triangle(this.pos.x, this.pos.y, this.pos.x + size, this.pos.y + size);
+            p5.strokeWeight(5);  
+            p5.triangle(this.pos.x, this.pos.y, this.pos.x + this.size, this.pos.y + this.size, this.pos.x + this.size, this.pos.y - this.size);
         }
-        move() {
-            this.pos.x += this.speed;
+        sweep() {
+            this.pos.x -= this.speed;
             // Reset on edges of X axis
-            if (this.pos.x > width) {
-                this.pos.x = 0;
+            if (this.pos.x < 0) {
+                this.pos.x = width;
+                // Come in at random height and faster
+                this.pos.y = getRandomHeight(10, height-10)
+                if (this.speed < 8){
+                    this.speed += .5;
+                }
             }
+        }
+        killCheck() {
+            if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 20) {
+                kill = true;
+            };
         }
       }               
 
@@ -239,10 +264,14 @@
         player.move();
         player.gravity();
         if (direction == 'jump'){
-            player.hop();
-            console.log("HOP");      
+            player.hop();   
         }
+      };
 
+      function updateKiller() {
+        killer.render();
+        killer.killCheck();
+        killer.sweep();
       };
 
       // GAME STATE AND CONTROL FUNCTIONS
@@ -265,10 +294,21 @@
     }
 
     function collisionReset(){
-        console.log("Collision reset");
+        // console.log("Collision reset");
         collision = false;
         p5.background(220);
     }
+
+    function killReset(){
+        console.log("KILLED!");
+        kill = false;
+        p5.background(220);
+    }
+
+    // Function to get random height (for killer)
+    function getRandomHeight(min, max){
+        return Math.random() * (max - min) + min;
+    };
 
     // Is there a better way to do this with reactivity?
     setInterval(checkGameState, 500);

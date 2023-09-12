@@ -29,20 +29,25 @@
     let score = 0;
     let stockParticles = [];
     let stockSpeed = 1;
-    const bounceRange = 50;
+    const bounceRange = 30;
     let player;
 
     /// P5 SKETCH STARTS HERE.
     const sketch = (p5) => {
       const height = 400;
       const width = 1000;
-      const ground = 100; // Defines how far from bottom ground is
+      const ground = bounceRange; // Defines how far from bottom ground is
       const size = 15; // Size of player
       const g = 1; // Gravity
 
-      // Calculate price range
+      // Calculate price range + translate to a height
       const priceRange = priceMax - priceMin;
-      const rangeFix = (height*.8)/priceRange;       
+      const scalar = .9;
+      const rangeFix = (height*scalar)/priceRange;
+
+      function calcHeight(price){
+        return (((priceMax - price) * rangeFix) + bounceRange);
+      }       
 
       p5.setup = () => {
         p5.createCanvas(width, height);
@@ -54,13 +59,13 @@
         // Create stock particles
         let xPos = 0; 
         for (let [date, prices] of stockArray){
-            let yPos = ((priceMax - prices['2. high']) * rangeFix) + bounceRange;
+            let yPos = calcHeight(prices['2. high']);
+            // let yPos = height - (((priceMax - prices['2. high']) * rangeFix)+ bounceRange);
             const s = new Particle(xPos,yPos, stockSpeed);
             stockParticles.push(s);
             xPos += width/100; //currently there are 100 particles, as 100 stock details
         }
       };
-
 
       // GAME DRAW LOOP
       p5.draw = () => {
@@ -68,8 +73,9 @@
 
         // // Make price mark
         p5.strokeWeight(0);  
-        p5.textSize(20);
-        p5.text('$price', 10, 30);
+        p5.textSize(15);
+        p5.text(`High: $${priceMax}`, 5, calcHeight(priceMax));
+        p5.text(`Low: $${priceMin}`, 5, calcHeight(priceMin));
         // p5.fill(0, 102, 153);
 
         // Draw ground line
@@ -196,6 +202,28 @@
         
       }
 
+      // KILLER CLASS
+      class KILLER {
+        constructor(x, y, color='red', size) {
+            this.pos = p5.createVector(x, y);
+            this.speed = 1;
+            this.color=color;
+            this.size=size;
+        }
+        render() {
+            p5.stroke(this.color);
+            p5.strokeWeight(10);  
+            p5.triangle(this.pos.x, this.pos.y, this.pos.x + size, this.pos.y + size);
+        }
+        move() {
+            this.pos.x += this.speed;
+            // Reset on edges of X axis
+            if (this.pos.x > width) {
+                this.pos.x = 0;
+            }
+        }
+      }               
+
       // FUNCTIONS FOR DRAW LOOP
       function updateParticles() {
         for (const p of stockParticles) {
@@ -258,10 +286,13 @@
 </style>
 
 <div>
-    <h2>Stock data:</h2>
+    <h2>Level data:</h2>
     <div class="row">
-        <div class="col">You chose <b>{tickerName}</b></div>
-        <div class="col">Score: {score}</div>
+        <div class="col">You chose <b>{tickerName} stocks.</b></div>
+        <div class="col">
+            <div class="col">Score: {score}</div>
+            <div class="col">Time: {'none'}</div>
+        </div>
     </div>
 
     <P5 {sketch} />
@@ -274,7 +305,7 @@
 
         <label>
             Speed
-            <input type="range" bind:value={speed} min="0.5" max="2.5" step="0.5" />
+            <input type="range" bind:value={speed} min="0.5" max="3" step="0.5" />
             {speed*2}
         </label>
         <span class="text-right">

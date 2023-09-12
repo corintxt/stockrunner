@@ -45,6 +45,7 @@ import Jump from "./Jump.svelte";
 
     let direction = 'none';
     let gameSpeed = 1;
+    let maxSpeed = 3;
 
     // Handle key press
     function onKeyDown(e) {
@@ -60,11 +61,15 @@ import Jump from "./Jump.svelte";
 				 break;
 			 case 37:
                 //left
-				 gameSpeed -= 0.5;
+                if (gameSpeed > 0.5){
+                    gameSpeed -= 0.5;
+                }
 				 break;
 			 case 39:
 				//right
-                gameSpeed += 0.5;
+                if (gameSpeed < maxSpeed){
+                    gameSpeed += 0.5;
+                }
 				 break;
 		 }
          
@@ -90,7 +95,6 @@ import Jump from "./Jump.svelte";
     <div>
         <!-- TODO: Conditional logic to make each button do the right thing at right time -->
         <button class="btn btn-primary" type="button" on:click="{ toggle }">{ buttonMsg }</button>
-
     </div>
 
     <hr>

@@ -1,5 +1,6 @@
 <script>
     import P5 from 'p5-svelte';
+    import Scoreboard from "./Scoreboard.svelte";
 
     // Export this variable so that it can be a prop that gets passed in on 
     // component creation
@@ -287,13 +288,9 @@
         } else {
             pauseGame();
         }
-        // if (finishState=='timeup'){
-        //     // gameTimeUp()
-        // } else if (finishState=='gameover') {
-        //     // gameOver()
-        // } else if (finishState=='win'){
-        //     // gameWin()
-        // }
+        if (finishState!='play'){
+             gameState = false;
+        }
     }
 
     function collisionReset(){
@@ -336,7 +333,9 @@
             // Need to have a different function here.
         }
     };
+    // Ideally we can stop this when game ends!
     setInterval(countTime, 1000);
+
 </script>
 
 <style>
@@ -354,8 +353,8 @@
     
     {#if finishState=='play'}
         <P5 {sketch} />
-    {:else if finishState =='timeup'}
-        <h1>TIME'S UP!</h1>
+    {:else}
+        <Scoreboard {finishState} {score}/>
     {/if}
     <div>
         {#if gameState}

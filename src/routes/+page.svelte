@@ -1,6 +1,5 @@
 <script>
 import key from "$lib/local.js"
-import Chart from "./Chart.svelte";
 import Jump from "./Jump.svelte";
 
 

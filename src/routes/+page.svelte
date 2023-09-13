@@ -2,7 +2,6 @@
 import key from "$lib/local.js"
 import Jump from "./Jump.svelte";
 
-
     const title = "Stockrunner";
 
     const tickers = ["AAPL","AMZN","GOOGL","META","TSLA"];

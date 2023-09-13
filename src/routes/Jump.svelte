@@ -27,16 +27,18 @@
     console.log("First day high:" + " $" + firstPoint)
 
     // Define outside of p5 scoped variables for game objects
-    let time = 5;
+    let time = 500;
+    let lives = 100;
+    let score = 0;
     let collision = false;
     let kill = false;
-    let score = 0;
     let stockParticles = [];
     let stockSpeed = 1;
     const bounceRange = 30;
     let player;
     let killer;
     let finishState = 'play';
+    let killGraphic = false;
 
     /// P5 SKETCH STARTS HERE.
     const sketch = (p5) => {
@@ -97,6 +99,7 @@
         updatePlayer();
         updateParticles();
         updateKiller();
+        checkKillScreen(killGraphic);
 
         // Check for collisions and kills
         if (collision) {
@@ -105,14 +108,13 @@
             score += 1;
             // setCollision(true);
         }
-
         if (kill) {
-            p5.background('red');
-            p5.strokeWeight(0);  
-            p5.textSize(100);
-            p5.text("KILL", width/2, height/2);
-            setTimeout(killReset, 500);
-            // gameState = false;
+            kill = false;
+            lives--;
+            killGraphic = true;
+            setTimeout(()=>{
+                killGraphic = false;
+            },300)
         }
       }; // End draw loop
 
@@ -242,6 +244,8 @@
             if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 20) {
                 kill = true;
                 console.log("Kill: true")
+                this.pos.x = width;
+                this.pos.y = getRandomHeight(10, height-10);
             };
         }
       }               
@@ -270,6 +274,14 @@
         killer.killCheck();
         killer.sweep();
       };
+      function checkKillScreen(killSwitch){
+        if (killSwitch){
+            p5.background('red');
+            p5.strokeWeight(0);  
+            p5.textSize(100);
+            p5.text("KILL", width/2, height/2); 
+        };
+      };
 
       // GAME STATE AND CONTROL FUNCTIONS
       function playGame() {
@@ -294,14 +306,7 @@
     }
 
     function collisionReset(){
-        // console.log("Collision reset");
         collision = false;
-        p5.background(220);
-    }
-
-    function killReset(){
-        console.log("kill reset");
-        kill = false;
         p5.background(220);
     }
 
@@ -347,6 +352,7 @@
         <div class="col"><b>{tickerName} stocks:</b> {firstDate} — {lastDate}</div>
         <div class="col">
             <div class="col">Score: {score}</div>
+            <div class="col">Lives: {lives}</div>
             <div class="col">Time: {time}</div>
         </div>
     </div>

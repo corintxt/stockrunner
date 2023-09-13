@@ -50,24 +50,24 @@ import Jump from "./Jump.svelte";
     function onKeyDown(e) {
 		 switch(e.keyCode) {
 			 case 38:
-                direction = 'up'
+                // direction = 'up'
 				 break;
 			 case 40:
-                direction = 'down'
+                // direction = 'down'
 				 break;
              case 32:
                 direction = 'jump'
 				 break;
 			 case 37:
-                //left
-                if (gameSpeed > 0.5){
-                    gameSpeed -= 0.5;
+                direction = 'left'
+                if (gameSpeed > -3){
+                    gameSpeed -= 1;
                 }
-				 break;
+                break;
 			 case 39:
-				//right
+				direction = 'right'
                 if (gameSpeed < maxSpeed){
-                    gameSpeed += 0.5;
+                    gameSpeed += 1;
                 }
 				 break;
 		 }
@@ -93,7 +93,7 @@ import Jump from "./Jump.svelte";
 
     <div>
         <!-- TODO: Conditional logic to make each button do the right thing at right time -->
-        <button class="btn btn-primary" type="button" on:click="{ toggle }">{ buttonMsg }</button>
+        <button class="btn btn-dark" type="button" on:click="{ toggle }">{ buttonMsg }</button>
     </div>
 
     <hr>

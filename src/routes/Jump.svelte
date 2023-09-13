@@ -27,8 +27,8 @@
     console.log("First day high:" + " $" + firstPoint)
 
     // Define outside of p5 scoped variables for game objects
-    let time = 500;
-    let lives = 100;
+    let time = 100;
+    let lives = 3;
     let score = 0;
     let collision = false;
     let kill = false;
@@ -62,7 +62,7 @@
         p5.background(220);
 
         // Create a player
-        player = new Player(0, height/2, 'blue', size);
+        player = new Player(10, height/2, 'blue', size);
 
         // Create stock particles
         let xPos = 0; 
@@ -75,7 +75,7 @@
         }
 
         // Create a killer (eventually could make multiple)
-        killer = new Killer(width, height/2, 'red', 10, 2);
+        killer = new Killer(width, height/2, 'red', 15, 2);
 
       };
 
@@ -101,7 +101,7 @@
         updateKiller();
         checkKillScreen(killGraphic);
 
-        // Check for collisions and kills
+        // Check for collisions, kills, lives
         if (collision) {
             p5.background('#cff08d');
             setTimeout(collisionReset, 5);
@@ -115,6 +115,12 @@
             setTimeout(()=>{
                 killGraphic = false;
             },300)
+        }
+        if (lives==0) {
+            setFinishState('gameover')
+        };
+        if (score==99){
+            setFinishState('win')
         }
       }; // End draw loop
 
@@ -183,7 +189,9 @@
             this.pos.x += this.speed;
             // Reset on edges of X axis
             if (this.pos.x > width) {
-                this.pos.x = 0;
+                this.pos.x = 1;
+            } else if (this.pos.x < 0) {
+                this.pos.x = width-1;
             }
             // Can't pass through floor/ceiling on Y axis
             if (this.pos.y < 0) {
@@ -192,9 +200,9 @@
                 this.pos.y = height - 3;
             }
             // // Direction controls
-            // if (direction == 'up'){
+            // if (direction == 'left'){
             //     this.pos.y -= this.speed;
-            // } else if (direction == 'down'){
+            // } else if (direction == 'right'){
             //     this.pos.y += this.speed;
             // }
         }
@@ -241,7 +249,7 @@
             }
         }
         killCheck() {
-            if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 20) {
+            if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 25) {
                 kill = true;
                 console.log("Kill: true")
                 this.pos.x = width;
@@ -330,7 +338,7 @@
     }
 
     function countTime() {
-        if (time > 0){ 
+        if (time > 0 && finishState=='play'){ 
             time-=1;
         } else if (time == 0){
             console.log("Time's up!")
@@ -371,8 +379,8 @@
 
         <label>
             Speed
-            <input type="range" bind:value={speed} min="0.5" max="3" step="0.5" />
-            {speed*2}
+            <input type="range" bind:value={speed} min="-3" max="3" step="0.5" />
+            {speed}
         </label>
         <span class="text-right">
             |  <em>Left/right arrows adjust speed, spacebar to boost</em>

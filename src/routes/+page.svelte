@@ -84,7 +84,7 @@ import Jump from "./Jump.svelte";
 
     <h1>{ title }</h1>
 
-    <p>Pick a stock:</p>
+    <p>Pick a stock to start:</p>
 
     {#each tickers as ticker}
         <button type="button" class="btn btn-secondary btn-space" on:click="{ () => fetchData(ticker) }">{ticker}</button>
@@ -101,7 +101,6 @@ import Jump from "./Jump.svelte";
 
     {#if display.switchOn}
         <div>
-            GAME DISPLAY <strong>ON</strong>
             <!-- Load the table only after response from .fetch() request -->
             {#await promise}
                 <p>Waiting for response...</p>

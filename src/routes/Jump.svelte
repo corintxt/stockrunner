@@ -13,18 +13,20 @@
 
     console.log(data["Meta Data"])
     const tickerName = data["Meta Data"]["2. Symbol"];
-    const stockPriceSeries = data["Time Series (Daily)"];  
+    const stockPriceSeries = data["Time Series (Daily)"];
+    const firstDate = Object.keys(stockPriceSeries)[99];
+    const lastDate = Object.keys(stockPriceSeries)[0];
 
     // Convet obj to array for easy iteration in draw function
     const stockArray = Object.entries(stockPriceSeries);
-    let prices = stockArray.map(a => parseFloat(a[1]['2. high']));
-
-    const firstPoint = prices[0]
-    console.log("First day high:" + " $" + firstPoint)
+    const prices = stockArray.map(a => parseFloat(a[1]['2. high']));
     const priceMin = Math.min(...prices);
     const priceMax = Math.max(...prices);
+    const firstPoint = prices[0]
+    console.log("First day high:" + " $" + firstPoint)
 
     // Define outside of p5 scoped variables for game objects
+    let time = 5;
     let collision = false;
     let kill = false;
     let score = 0;
@@ -33,6 +35,7 @@
     const bounceRange = 30;
     let player;
     let killer;
+    let finishState = 'play';
 
     /// P5 SKETCH STARTS HERE.
     const sketch = (p5) => {
@@ -56,7 +59,7 @@
         p5.background(220);
 
         // Create a player
-        player = new Player(width/2, height/2, 'blue', size);
+        player = new Player(0, height/2, 'blue', size);
 
         // Create stock particles
         let xPos = 0; 
@@ -68,8 +71,8 @@
             xPos += width/100; //currently there are 100 particles, as 100 stock details
         }
 
-        // Create a killer (this will need to be more random)
-        killer = new KILLER(width, height/2, 'red', 10, 2);
+        // Create a killer (eventually could make multiple)
+        killer = new Killer(width, height/2, 'red', 10, 2);
 
       };
 
@@ -77,7 +80,7 @@
       p5.draw = () => {
         p5.background(220);
 
-        // // Make price mark
+        // // Make price marks
         p5.strokeWeight(0);  
         p5.textSize(15);
         p5.text(`High: $${priceMax}`, 5, calcHeight(priceMax));
@@ -99,7 +102,6 @@
             p5.background('#cff08d');
             setTimeout(collisionReset, 5);
             score += 1;
-            // gameState = false;
             // setCollision(true);
         }
 
@@ -111,7 +113,7 @@
             setTimeout(killReset, 500);
             // gameState = false;
         }
-      };    
+      }; // End draw loop
 
       // PARTICLE CLASS
       class Particle {
@@ -122,7 +124,7 @@
             this.speed = 1;
         }
         render() {
-            p5.stroke('purple');
+            p5.stroke('#ad3af0');
             p5.strokeWeight(3);      
             p5.point(this.pos.x, this.pos.y);
       
@@ -130,7 +132,6 @@
         bounce(range) {            
             this.pos.y -= this.vec;
             this.pos.x -= this.speed;
-
             this.displace += this.vec;
 
             // Switch displacement vector at limit of range of motion
@@ -140,7 +141,6 @@
             } else if (this.displace < -range) {
                 this.vec *= -1;
             };
-
             // Reset at the edges of screen
             if (this.pos.y < 0) {
                 this.pos.y = height;
@@ -167,7 +167,6 @@
             this.size=size;
             this.vy = 0;
             this.jump = 10;
-            // this.acc = p5.createVector(0, 0);
         }
         render() {
             p5.stroke(this.color);
@@ -199,7 +198,6 @@
         gravity() {
             // Adapted from: https://editor.p5js.org/tnishida/sketches/Wv_-BBBaA
             this.pos.y += this.vy;
-
             if(this.pos.y < height - ground - size / 2){ // in the air
                 this.vy += g;
             }
@@ -209,16 +207,13 @@
             }
         }
         hop() {
-            // if(this.pos.y >= height - ground - size / 2){ // on the ground
-            //     this.vy = -this.jump;     
-            // }
             this.vy = -this.jump;
-        } 
+        }
         
       };
 
       // KILLER CLASS
-      class KILLER {
+      class Killer {
         constructor(x, y, color='red', size, speed) {
             this.pos = p5.createVector(x, y);
             this.speed = speed;
@@ -245,6 +240,7 @@
         killCheck() {
             if (p5.dist(this.pos.x, this.pos.y, player.pos.x, player.pos.y) < 20) {
                 kill = true;
+                console.log("Kill: true")
             };
         }
       }               
@@ -291,6 +287,13 @@
         } else {
             pauseGame();
         }
+        // if (finishState=='timeup'){
+        //     // gameTimeUp()
+        // } else if (finishState=='gameover') {
+        //     // gameOver()
+        // } else if (finishState=='win'){
+        //     // gameWin()
+        // }
     }
 
     function collisionReset(){
@@ -300,12 +303,12 @@
     }
 
     function killReset(){
-        console.log("KILLED!");
+        console.log("kill reset");
         kill = false;
         p5.background(220);
     }
 
-    // Function to get random height (for killer)
+    // Function to make random height (for killer)
     function getRandomHeight(min, max){
         return Math.random() * (max - min) + min;
     };
@@ -319,23 +322,41 @@
     function toggleGameState() {
         gameState = !gameState; 
     }
+
+    function setFinishState(state){
+        finishState = state;
+    }
+
+    function countTime() {
+        if (time > 0){ 
+            time-=1;
+        } else if (time == 0){
+            console.log("Time's up!")
+            setFinishState("timeup")
+            // Need to have a different function here.
+        }
+    };
+    setInterval(countTime, 1000);
 </script>
 
 <style>
-
 </style>
 
 <div>
-    <h2>Level data:</h2>
+    <h2>Level data</h2>
     <div class="row">
-        <div class="col">You chose <b>{tickerName} stocks.</b></div>
+        <div class="col"><b>{tickerName} stocks:</b> {firstDate} — {lastDate}</div>
         <div class="col">
             <div class="col">Score: {score}</div>
-            <div class="col">Time: {'none'}</div>
+            <div class="col">Time: {time}</div>
         </div>
     </div>
-
-    <P5 {sketch} />
+    
+    {#if finishState=='play'}
+        <P5 {sketch} />
+    {:else if finishState =='timeup'}
+        <h1>TIME'S UP!</h1>
+    {/if}
     <div>
         {#if gameState}
         <button type="button" class="btn btn-warning" on:click="{ toggleGameState }">Pause</button>
@@ -349,7 +370,7 @@
             {speed*2}
         </label>
         <span class="text-right">
-            |  <em>Left/right arrow adjust speed, space bar to jump</em>
+            |  <em>Left/right arrows adjust speed, spacebar to boost</em>
         </span>
     </div>
 </div>

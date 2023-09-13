@@ -62,7 +62,7 @@
         p5.background(220);
 
         // Create a player
-        player = new Player(10, height/2, 'blue', size);
+        player = new Player(10, height/2, '#0394fc', size);
 
         // Create stock particles
         let xPos = 0; 
@@ -179,7 +179,8 @@
         }
         render() {
             p5.stroke(this.color);
-            p5.strokeWeight(10);  
+            p5.strokeWeight(10);
+            p5.fill(this.color);
             p5.ellipse(this.pos.x, this.pos.y, this.size, this.size);
         }               
         adjustSpeed(s) {
@@ -233,7 +234,8 @@
         }
         render() {
             p5.stroke(this.color);
-            p5.strokeWeight(5);  
+            p5.strokeWeight(5);
+            p5.fill('black');
             p5.triangle(this.pos.x, this.pos.y, this.pos.x + this.size, this.pos.y + this.size, this.pos.x + this.size, this.pos.y - this.size);
         }
         sweep() {
@@ -352,6 +354,15 @@
 </script>
 
 <style>
+    #score {
+        color: #25ffa3;
+    }
+    #time {
+        color: #25afff;
+    }
+    #lives {
+        color: #ff79be;
+    }
 </style>
 
 <div>
@@ -359,9 +370,9 @@
     <div class="row">
         <div class="col"><b>{tickerName} stocks:</b> {firstDate} — {lastDate}</div>
         <div class="col">
-            <div class="col">Score: {score}</div>
-            <div class="col">Lives: {lives}</div>
-            <div class="col">Time: {time}</div>
+            <div class="col" id="score">Score: {score}</div>
+            <div class="col" id="lives">Lives: {lives}</div>
+            <div class="col" id="time">Time: {time}</div>
         </div>
     </div>
     

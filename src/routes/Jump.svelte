@@ -27,7 +27,7 @@
     console.log("First day high:" + " $" + firstPoint)
 
     // Define outside of p5 scoped variables for game objects
-    let time = 100;
+    let time = 60;
     let lives = 3;
     let score = 0;
     let collision = false;
@@ -289,7 +289,7 @@
             p5.background('red');
             p5.strokeWeight(0);  
             p5.textSize(100);
-            p5.text("KILL", width/2, height/2); 
+            p5.text("KILL", width/2-50, height/2); 
         };
       };
 
@@ -343,9 +343,8 @@
         if (time > 0 && finishState=='play'){ 
             time-=1;
         } else if (time == 0){
-            console.log("Time's up!")
+            // console.log("Time's up!")
             setFinishState("timeup")
-            // Need to have a different function here.
         }
     };
     // Ideally we can stop this when game ends!

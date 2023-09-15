@@ -1,5 +1,6 @@
 <script>
-import key from "$lib/local.js"
+// import key from "$lib/local.js"
+const key = process.env.API_KEY
 import Jump from "./Jump.svelte";
 
     const title = "Stockrunner";
@@ -104,7 +105,6 @@ import Jump from "./Jump.svelte";
                 <p>Waiting for response...</p>
             {:then stockData}
                 <Jump stockData={stockData} direction={direction} speed={gameSpeed} gameState={true} />
-                <!-- This will become a Chart with chartData -->
             {:catch error}
                 <p style="color: red">{error.message}</p>
             {/await}

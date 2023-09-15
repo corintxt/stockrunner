@@ -1,6 +1,8 @@
 <script>
+// Uncomment/swap when working locally
 // import key from "$lib/local.js"
 const key = process.env.API_KEY
+
 import Jump from "./Jump.svelte";
 
     const title = "Stockrunner";
